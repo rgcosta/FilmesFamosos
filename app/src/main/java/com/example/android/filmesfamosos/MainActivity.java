@@ -1,5 +1,9 @@
 package com.example.android.filmesfamosos;
 
+import android.content.Context;
+import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -70,11 +74,20 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
 
     @Override
     public void onClick(Movie simpleMovie) {
-        if(mToast != null)
-            mToast.cancel();
+        Intent intent = new Intent(this, DetailActivity.class);
+        intent.putExtra(Intent.EXTRA_TEXT + "_title", simpleMovie.mTitle);
+        intent.putExtra(Intent.EXTRA_TEXT + "_poster", simpleMovie.mImgUrl);
+        intent.putExtra(Intent.EXTRA_TEXT + "_overview", simpleMovie.mOverview);
+        intent.putExtra(Intent.EXTRA_TEXT + "_voteAverage", simpleMovie.mVoteAverage);
+        intent.putExtra(Intent.EXTRA_TEXT + "_releaseDate", simpleMovie.mReleaseDate);
 
-        mToast = Toast.makeText(this, simpleMovie.mTitle,Toast.LENGTH_LONG);
-        mToast.show();
+        startActivity(intent);
+    }
+
+    public boolean isOnline() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 
     public class FetchMoviesTask extends AsyncTask<Boolean, Void, Movie[]> {
@@ -82,7 +95,13 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            mLoadingIndicator.setVisibility(View.VISIBLE);
+            if (isOnline()) {
+                mLoadingIndicator.setVisibility(View.VISIBLE);
+            } else {
+                Toast toast = Toast.makeText(getApplicationContext(), "No Internet Access", Toast.LENGTH_LONG);
+                toast.show();
+            }
+
         }
 
         @Override
