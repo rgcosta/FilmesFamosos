@@ -20,8 +20,6 @@ import java.net.URL;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Movie[] myMoviesDataSet;
-
     private MoviesAdapter mAdapter;
     private RecyclerView mMoviesGrid;
 
