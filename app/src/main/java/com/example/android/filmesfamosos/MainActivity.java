@@ -6,6 +6,9 @@ import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
 import org.json.JSONException;
 
@@ -82,5 +85,31 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(Movie[] movies) {
             mAdapter.setMoviesData(movies);
         }
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.movies_grid, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int menuItemSelected = item.getItemId();
+
+        if (menuItemSelected == R.id.popular){
+            mAdapter.setMoviesData(null);
+            loadMoviesData(true);
+            return true;
+        }
+        else if (menuItemSelected == R.id.top_rated){
+            mAdapter.setMoviesData(null);
+            loadMoviesData(false);
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }

@@ -23,7 +23,7 @@ import java.util.Scanner;
 
 public class NetworkUtils {
 
-    static String MOVIES_BASE_URL =
+    final static String MOVIES_BASE_URL =
             "http://api.themoviedb.org/3";
 
     final static String API_KEY = "api_key";
@@ -31,14 +31,16 @@ public class NetworkUtils {
     final static String POPULAR_PATH = "/movie/popular";
     final static String RATED_PATH = "/movie/top_rated";
 
+    static String MOVIES_URL;
+
 
     public static URL buildUrl(boolean isPopular) {
         if (isPopular)
-            MOVIES_BASE_URL = MOVIES_BASE_URL + POPULAR_PATH;
+            MOVIES_URL = MOVIES_BASE_URL + POPULAR_PATH;
         else
-            MOVIES_BASE_URL = MOVIES_BASE_URL + RATED_PATH;
+            MOVIES_URL = MOVIES_BASE_URL + RATED_PATH;
 
-        Uri builtUri = Uri.parse(MOVIES_BASE_URL).buildUpon()
+        Uri builtUri = Uri.parse(MOVIES_URL).buildUpon()
                 .appendQueryParameter(API_KEY, key)
                 .build();
 

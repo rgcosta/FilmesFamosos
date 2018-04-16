@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Filmes Famosos</string>
+    <string name="popular">Popularidade</string>
+    <string name="top_rated">Melhor Avaliado</string>
 </resources>
