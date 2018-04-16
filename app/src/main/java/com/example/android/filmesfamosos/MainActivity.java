@@ -9,6 +9,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import org.json.JSONException;
 
@@ -22,12 +25,16 @@ public class MainActivity extends AppCompatActivity {
     private MoviesAdapter mAdapter;
     private RecyclerView mMoviesGrid;
 
-
+    private TextView mErrorDisplay;
+    private ProgressBar mLoadingIndicator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        this.mErrorDisplay = (TextView) findViewById(R.id.tv_error_display);
+        this.mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
 
         this.mMoviesGrid = (RecyclerView) findViewById(R.id.rv_movies);
 
@@ -43,13 +50,30 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loadMoviesData(boolean isPopular){
+        showMoviesGrid();
 
         FetchMoviesTask fetchTask = new FetchMoviesTask();
         fetchTask.execute(isPopular);
     }
 
+    private void showMoviesGrid(){
+        mErrorDisplay.setVisibility(View.INVISIBLE);
+        mMoviesGrid.setVisibility(View.VISIBLE);
+    }
+
+    private void showErrorMessage(){
+        mMoviesGrid.setVisibility(View.INVISIBLE);
+        mErrorDisplay.setVisibility(View.VISIBLE);
+    }
+
 
     public class FetchMoviesTask extends AsyncTask<Boolean, Void, Movie[]> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            mLoadingIndicator.setVisibility(View.VISIBLE);
+        }
 
         @Override
         protected Movie[] doInBackground(Boolean... booleans) {
@@ -66,7 +90,6 @@ public class MainActivity extends AppCompatActivity {
             try {
                 String jsonMoviesResponse = NetworkUtils.getResponseFromHttpUrl(moviesRequestUrl);
 
-                //TODO: Format response into movie model
                 Log.e("JSON RESPONSE: ", jsonMoviesResponse);
                 Movie[] moviesData = NetworkUtils.getMoviesFromJson(jsonMoviesResponse);
 
@@ -83,7 +106,14 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Movie[] movies) {
-            mAdapter.setMoviesData(movies);
+            mLoadingIndicator.setVisibility(View.INVISIBLE);
+            if(movies != null) {
+                showMoviesGrid();
+                mAdapter.setMoviesData(movies);
+            } else {
+                showErrorMessage();
+            }
+
         }
     }
 
