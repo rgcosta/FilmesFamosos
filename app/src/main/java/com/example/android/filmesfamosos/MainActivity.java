@@ -7,6 +7,8 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
+import org.json.JSONException;
+
 import java.io.IOException;
 import java.net.URL;
 
@@ -63,11 +65,14 @@ public class MainActivity extends AppCompatActivity {
 
                 //TODO: Format response into movie model
                 Log.e("JSON RESPONSE: ", jsonMoviesResponse);
+                Movie[] moviesData = NetworkUtils.getMoviesFromJson(jsonMoviesResponse);
 
-
-                return new Movie[0];
+                return moviesData;
 
             } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            } catch (JSONException e) {
                 e.printStackTrace();
                 return null;
             }

@@ -12,5 +12,12 @@ public class Movie {
     public double mVoteAverage;
     public String mReleaseDate;
 
-    //TODO: constructors
+
+    public Movie(String title, String imgUrl, String overview, double voteAverage, String releaseDate){
+        this.mTitle = title;
+        this.mOverview = overview;
+        this.mImgUrl = imgUrl;
+        this.mReleaseDate = releaseDate;
+        this.mVoteAverage = voteAverage;
+    }
 }

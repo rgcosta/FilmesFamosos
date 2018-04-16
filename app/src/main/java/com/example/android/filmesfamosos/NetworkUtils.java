@@ -8,6 +8,12 @@ package com.example.android.filmesfamosos;
 import java.io.IOException;
 
 import android.net.Uri;
+import android.util.Log;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -70,5 +76,34 @@ public class NetworkUtils {
         } finally {
             urlConnection.disconnect();
         }
+    }
+
+    public static Movie[] getMoviesFromJson(String jsonString) throws JSONException {
+
+        final String RESULTS_ARRAY = "results";
+        final String TITLE = "original_title";
+        final String POSTER = "poster_path";
+        final String OVERVIEW = "overview";
+        final String VOTE_AVERAGE = "vote_average";
+        final String RELEASE_DATE = "release_date";
+        final String IMG_SIZE = "/w780/";    //options: "w92", "w154", "w185", "w342", "w500", "w780" ou "original"
+
+        JSONObject moviesJsonObj = new JSONObject(jsonString);
+        JSONArray moviesArray = moviesJsonObj.getJSONArray(RESULTS_ARRAY);
+
+        Movie[] moviesData = new Movie[moviesArray.length()];
+        for(int i=0; i < moviesArray.length(); i++){
+            JSONObject simpleMovie = moviesArray.getJSONObject(i);
+
+            String title = simpleMovie.getString(TITLE);
+            String imgUrl = "http://image.tmdb.org/t/p" + IMG_SIZE + simpleMovie.getString(POSTER);
+            String overview = simpleMovie.getString(OVERVIEW);
+            Double voteAverage = simpleMovie.getDouble(VOTE_AVERAGE);
+            String releaseDate = simpleMovie.getString(RELEASE_DATE);
+
+            moviesData[i] = new Movie(title,imgUrl,overview, voteAverage, releaseDate);
+        }
+
+        return moviesData;
     }
 }
