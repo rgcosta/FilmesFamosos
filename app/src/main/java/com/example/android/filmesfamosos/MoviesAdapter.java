@@ -16,11 +16,18 @@ import com.squareup.picasso.Picasso;
 
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewHolder> {
 
+    //TODO:Change from array to ListArray
     Movie[] mMovies;
 
+    MoviesOnClickHandler mClickHandler;
 
-    public MoviesAdapter(){
-        //this.mMovies = movies;
+    public interface MoviesOnClickHandler {
+        void onClick(Movie simpleMovie);
+    }
+
+
+    public MoviesAdapter(MoviesOnClickHandler onClickHandler){
+        this.mClickHandler = onClickHandler;
     }
 
     @Override
@@ -58,13 +65,22 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
         notifyDataSetChanged();
     }
 
-    public class MovieViewHolder extends RecyclerView.ViewHolder {
+
+    public class MovieViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         ImageView mImageView;
 
         public MovieViewHolder(View itemView){
             super(itemView);
             this.mImageView = (ImageView) itemView.findViewById(R.id.imageView);
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+            int adapterPosition = getAdapterPosition();
+            Movie movieClicked = mMovies[adapterPosition];
+            mClickHandler.onClick(movieClicked);
         }
     }
 }

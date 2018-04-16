@@ -12,19 +12,23 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONException;
 
 import java.io.IOException;
 import java.net.URL;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements MoviesAdapter.MoviesOnClickHandler {
 
     private MoviesAdapter mAdapter;
     private RecyclerView mMoviesGrid;
 
     private TextView mErrorDisplay;
     private ProgressBar mLoadingIndicator;
+
+    //TODO: deletar toast
+    Toast mToast;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
 
         mMoviesGrid.setHasFixedSize(true);
 
-        this.mAdapter = new MoviesAdapter();
+        this.mAdapter = new MoviesAdapter(this);
         mMoviesGrid.setAdapter(mAdapter);
 
         loadMoviesData(true);
@@ -64,6 +68,14 @@ public class MainActivity extends AppCompatActivity {
         mErrorDisplay.setVisibility(View.VISIBLE);
     }
 
+    @Override
+    public void onClick(Movie simpleMovie) {
+        if(mToast != null)
+            mToast.cancel();
+
+        mToast = Toast.makeText(this, simpleMovie.mTitle,Toast.LENGTH_LONG);
+        mToast.show();
+    }
 
     public class FetchMoviesTask extends AsyncTask<Boolean, Void, Movie[]> {
 
