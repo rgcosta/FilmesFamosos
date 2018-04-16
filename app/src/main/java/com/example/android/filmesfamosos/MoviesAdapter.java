@@ -15,10 +15,11 @@ import com.squareup.picasso.Picasso;
 
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewHolder> {
 
-    String[] mMoviesImg;
+    Movie[] mMovies;
 
-    public MoviesAdapter(String[] movies){
-        this.mMoviesImg = movies;
+
+    public MoviesAdapter(){
+        //this.mMovies = movies;
     }
 
     @Override
@@ -38,13 +39,21 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
     public void onBindViewHolder(MovieViewHolder holder, int position) {
 
         Picasso.with(holder.mImageView.getContext())
-                .load(mMoviesImg[position])
+                .load(mMovies[position].mImgUrl)
                 .into(holder.mImageView);
     }
 
     @Override
     public int getItemCount() {
-        return mMoviesImg.length;
+        if (mMovies == null)
+            return 0;
+        else
+            return mMovies.length;
+    }
+
+    public void setMoviesData(Movie[] movies){
+        this.mMovies = movies;
+        notifyDataSetChanged();
     }
 
     public class MovieViewHolder extends RecyclerView.ViewHolder {
