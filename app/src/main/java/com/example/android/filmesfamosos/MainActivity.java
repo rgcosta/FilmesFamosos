@@ -31,18 +31,15 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
     private TextView mErrorDisplay;
     private ProgressBar mLoadingIndicator;
 
-    //TODO: deletar toast
-    Toast mToast;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        this.mErrorDisplay = (TextView) findViewById(R.id.tv_error_display);
-        this.mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
+        this.mErrorDisplay = findViewById(R.id.tv_error_display);
+        this.mLoadingIndicator = findViewById(R.id.pb_loading_indicator);
 
-        this.mMoviesGrid = (RecyclerView) findViewById(R.id.rv_movies);
+        this.mMoviesGrid = findViewById(R.id.rv_movies);
 
         GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
         mMoviesGrid.setLayoutManager(layoutManager);
@@ -107,7 +104,6 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         @Override
         protected Movie[] doInBackground(Boolean... booleans) {
 
-            /* If there's no booleans, there's nothing to look up. */
             if (booleans.length == 0) {
                 return null;
             }
