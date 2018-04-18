@@ -27,7 +27,7 @@ public class NetworkUtils {
             "http://api.themoviedb.org/3";
 
     final static String API_KEY = "api_key";
-    final static String key = "b6e57ef91d7c501bb8a54b450f695d97";
+    final static String key = "";               //INSERIR API KEY AQUI.
     final static String POPULAR_PATH = "/movie/popular";
     final static String RATED_PATH = "/movie/top_rated";
 
