@@ -2,6 +2,7 @@ package com.example.android.filmesfamosos;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -41,7 +42,11 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
 
         this.mMoviesGrid = findViewById(R.id.rv_movies);
 
-        GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
+        GridLayoutManager layoutManager = new GridLayoutManager(this,2);
+        int mOrientation = getResources().getConfiguration().orientation;
+        if (mOrientation == Configuration.ORIENTATION_LANDSCAPE){
+            layoutManager.setSpanCount(4);
+        }
         mMoviesGrid.setLayoutManager(layoutManager);
 
         mMoviesGrid.setHasFixedSize(true);
