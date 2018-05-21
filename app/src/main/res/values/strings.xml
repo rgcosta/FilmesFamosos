@@ -10,4 +10,10 @@
     <string name="try_again_label">Tentar Novamente</string>
     <string name="no_internet">Sem internet?</string>
     <string name="offline_label">Offline</string>
+
+    <!-- String referente aos ContentDescriptions
+    -->
+    <string name="desc_movies_grid">Catalogo de filmes.</string>
+    <string name="movie_pic">Image de divulgação do filme.</string>
+    <string name="movie_poster">Poster do filme.</string>
 </resources>
