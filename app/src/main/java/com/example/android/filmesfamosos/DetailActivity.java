@@ -29,25 +29,14 @@ public class DetailActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         if (intent != null) {
-            if (intent.hasExtra(Intent.EXTRA_TEXT + "_title")){
-                String title = intent.getStringExtra(Intent.EXTRA_TEXT + "_title");
-                this.mTitle.setText(title);
-            }
-            if (intent.hasExtra(Intent.EXTRA_TEXT + "_poster")){
-                String posterUrl = intent.getStringExtra(Intent.EXTRA_TEXT + "_poster");
-                Picasso.with(this).load(posterUrl).into(mMoviePoster);
-            }
-            if (intent.hasExtra(Intent.EXTRA_TEXT + "_overview")){
-                String overview = intent.getStringExtra(Intent.EXTRA_TEXT + "_overview");
-                this.mOverview.setText(overview);
-            }
-            if (intent.hasExtra(Intent.EXTRA_TEXT + "_releaseDate")){
-                String releaseDate = intent.getStringExtra(Intent.EXTRA_TEXT + "_releaseDate");
-                this.mReleaseDate.setText(releaseDate);
-            }
-            if (intent.hasExtra(Intent.EXTRA_TEXT + "_voteAverage")){
-                double voteAverage = intent.getDoubleExtra(Intent.EXTRA_TEXT + "_voteAverage", -1);
-                this.mVoteAverage.setText(String.valueOf(voteAverage));
+            if (intent.hasExtra(Intent.EXTRA_TEXT)){
+                Movie movieDetailed = intent.getParcelableExtra(Intent.EXTRA_TEXT);
+
+                this.mTitle.setText(movieDetailed.mTitle);
+                Picasso.with(this).load(movieDetailed.mImgUrl).into(mMoviePoster);
+                this.mOverview.setText(movieDetailed.mOverview);
+                this.mReleaseDate.setText(movieDetailed.mReleaseDate);
+                this.mVoteAverage.setText(String.valueOf(movieDetailed.mVoteAverage));
             }
         }
     }

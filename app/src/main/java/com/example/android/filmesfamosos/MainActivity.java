@@ -76,12 +76,14 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
     @Override
     public void onClick(Movie simpleMovie) {
         Intent intent = new Intent(this, DetailActivity.class);
+        intent.putExtra(Intent.EXTRA_TEXT, simpleMovie);
+        /*
         intent.putExtra(Intent.EXTRA_TEXT + "_title", simpleMovie.mTitle);
         intent.putExtra(Intent.EXTRA_TEXT + "_poster", simpleMovie.mImgUrl);
         intent.putExtra(Intent.EXTRA_TEXT + "_overview", simpleMovie.mOverview);
         intent.putExtra(Intent.EXTRA_TEXT + "_voteAverage", simpleMovie.mVoteAverage);
         intent.putExtra(Intent.EXTRA_TEXT + "_releaseDate", simpleMovie.mReleaseDate);
-
+        */
         startActivity(intent);
     }
 
