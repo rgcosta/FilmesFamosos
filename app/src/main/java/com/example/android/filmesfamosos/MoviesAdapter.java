@@ -12,7 +12,16 @@ import com.squareup.picasso.Picasso;
 
 /**
  * Created by Romulo on 16/04/2018.
+ *
  */
+
+//TODO 1: Terminar design da tela de detalhes do filme
+
+    //TODO 2: Implementar tela de landscape da pagina de detalhes
+    //TODO 3: Implementar touch selector
+    //TODO 4: Implementar cores padroes
+    //TODO 5: revisar se ainda há implementações de desgin.
+
 
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewHolder> {
 

@@ -3,4 +3,11 @@
     <string name="popular">Popularidade</string>
     <string name="top_rated">Melhor Avaliado</string>
     <string name="error_message">Um erro desconhecido ocorreu. Por favor, tente novamente.</string>
+    
+    <!-- Strings referente ao activity_no_internet_connection.xml 
+    --> 
+    <string name="no_internet_connection">Sem conexão com a internet ou servidor indisponível.</string>
+    <string name="try_again_label">Tentar Novamente</string>
+    <string name="no_internet">Sem internet?</string>
+    <string name="offline_label">Offline</string>
 </resources>

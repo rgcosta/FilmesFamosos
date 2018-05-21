@@ -17,7 +17,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.json.JSONException;
 
@@ -100,8 +99,9 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
             if (isOnline()) {
                 mLoadingIndicator.setVisibility(View.VISIBLE);
             } else {
-                Toast toast = Toast.makeText(getApplicationContext(), "No Internet Access", Toast.LENGTH_LONG);
-                toast.show();
+                Context context = MainActivity.this;
+                Intent noConnectionIntent = new Intent(context, NoInternetConnectionActivity.class);
+                startActivity(noConnectionIntent);
             }
 
         }
