@@ -32,11 +32,11 @@ public class DetailActivity extends AppCompatActivity {
             if (intent.hasExtra(Intent.EXTRA_TEXT)){
                 Movie movieDetailed = intent.getParcelableExtra(Intent.EXTRA_TEXT);
 
-                this.mTitle.setText(movieDetailed.mTitle);
-                Picasso.with(this).load(movieDetailed.mImgUrl).into(mMoviePoster);
-                this.mOverview.setText(movieDetailed.mOverview);
-                this.mReleaseDate.setText(movieDetailed.mReleaseDate);
-                this.mVoteAverage.setText(String.valueOf(movieDetailed.mVoteAverage));
+                this.mTitle.setText(movieDetailed.title);
+                Picasso.with(this).load(movieDetailed.getFullPosterPath()).into(mMoviePoster);
+                this.mOverview.setText(movieDetailed.overview);
+                this.mReleaseDate.setText(movieDetailed.releaseDate);
+                this.mVoteAverage.setText(String.valueOf(movieDetailed.voteAverage));
             }
         }
     }

@@ -10,6 +10,9 @@ import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Romulo on 16/04/2018.
  *
@@ -25,8 +28,7 @@ import com.squareup.picasso.Picasso;
 
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewHolder> {
 
-    //TODO:Change from array to ListArray
-    Movie[] mMovies;
+    List<Movie> mMovies = new ArrayList<>();
 
     MoviesOnClickHandler mClickHandler;
 
@@ -56,7 +58,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
     public void onBindViewHolder(MovieViewHolder holder, int position) {
 
         Picasso.with(holder.mImageView.getContext())
-                .load(mMovies[position].mImgUrl)
+                .load(mMovies.get(position).getFullPosterPath())
                 .into(holder.mImageView);
 
     }
@@ -66,10 +68,10 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
         if (mMovies == null)
             return 0;
         else
-            return mMovies.length;
+            return mMovies.size();
     }
 
-    public void setMoviesData(Movie[] movies){
+    public void setMoviesData(List<Movie> movies){
         this.mMovies = movies;
         notifyDataSetChanged();
     }
@@ -88,7 +90,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
         @Override
         public void onClick(View view) {
             int adapterPosition = getAdapterPosition();
-            Movie movieClicked = mMovies[adapterPosition];
+            Movie movieClicked = mMovies.get(adapterPosition);
             mClickHandler.onClick(movieClicked);
         }
     }

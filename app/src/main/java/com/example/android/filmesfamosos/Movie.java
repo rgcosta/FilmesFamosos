@@ -3,33 +3,92 @@ package com.example.android.filmesfamosos;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
+
 /**
  * Created by Romulo on 16/04/2018.
  */
 
 public class Movie implements Parcelable {
 
-    public String mTitle;
-    public String mImgUrl;
-    public String mOverview;
-    public double mVoteAverage;
-    public String mReleaseDate;
+    @Expose
+    public String title;
+
+    @Expose @SerializedName("poster_path")
+    public String posterPath;
+
+    @Expose
+    public String overview;
+
+    @Expose @SerializedName("vote_average")
+    public double voteAverage;
+
+    @Expose @SerializedName("release_date")
+    public String releaseDate;
 
 
     public Movie(String title, String imgUrl, String overview, double voteAverage, String releaseDate){
-        this.mTitle = title;
-        this.mOverview = overview;
-        this.mImgUrl = imgUrl;
-        this.mReleaseDate = releaseDate;
-        this.mVoteAverage = voteAverage;
+        this.title = title;
+        this.overview = overview;
+        this.posterPath = imgUrl;
+        this.releaseDate = releaseDate;
+        this.voteAverage = voteAverage;
     }
 
+
+
     protected Movie(Parcel in) {
-        mTitle = in.readString();
-        mImgUrl = in.readString();
-        mOverview = in.readString();
-        mVoteAverage = in.readDouble();
-        mReleaseDate = in.readString();
+        title = in.readString();
+        posterPath = in.readString();
+        overview = in.readString();
+        voteAverage = in.readDouble();
+        releaseDate = in.readString();
+    }
+
+    public void setTitle(String title){
+        this.title = title;
+    }
+
+    public String getTitle(){
+        return this.title;
+    }
+
+    public void setOverview(String overview){
+        this.overview = overview;
+    }
+
+    public String getOverview(){
+        return this.overview;
+    }
+
+    public void setPosterPath(String posterPath){
+        this.posterPath = posterPath;
+    }
+
+    public String getPosterPath(){
+        return this.posterPath;
+    }
+
+    public void setVoteAverage(double voteAverage){
+        this.voteAverage = voteAverage;
+    }
+
+    public double getVoteAverage(){
+        return this.voteAverage;
+    }
+
+    public void setReleaseDate(String releaseDate){
+        this.releaseDate = releaseDate;
+    }
+
+    public String getReleaseDate(){
+        return this.releaseDate;
+    }
+
+    public String getFullPosterPath(){
+        return "http://image.tmdb.org/t/p" + NetworkUtils.IMG_SIZE + getPosterPath();
     }
 
     public static final Creator<Movie> CREATOR = new Creator<Movie>() {
@@ -51,10 +110,19 @@ public class Movie implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeString(mTitle);
-        parcel.writeString(mImgUrl);
-        parcel.writeString(mOverview);
-        parcel.writeDouble(mVoteAverage);
-        parcel.writeString(mReleaseDate);
+        parcel.writeString(title);
+        parcel.writeString(posterPath);
+        parcel.writeString(overview);
+        parcel.writeDouble(voteAverage);
+        parcel.writeString(releaseDate);
+    }
+
+    @Override
+    public String toString() {
+        return "Title: " + this.title + "\n" +
+                "Overview: " + this.overview + "\n" +
+                "Vote: " + this.voteAverage + "\n" +
+                "Date: " + this.releaseDate + "\n" +
+                "Poster: " + this.posterPath + "\n";
     }
 }

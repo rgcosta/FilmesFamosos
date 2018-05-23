@@ -22,6 +22,11 @@ import org.json.JSONException;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity implements MoviesAdapter.MoviesOnClickHandler {
 
@@ -57,10 +62,41 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
     }
 
     private void loadMoviesData(boolean isPopular){
-        showMoviesGrid();
+        //showMoviesGrid();
 
-        FetchMoviesTask fetchTask = new FetchMoviesTask();
-        fetchTask.execute(isPopular);
+        if (isOnline()) {
+            mLoadingIndicator.setVisibility(View.VISIBLE);
+        } else {
+            Context context = MainActivity.this;
+            Intent noConnectionIntent = new Intent(context, NoInternetConnectionActivity.class);
+            startActivity(noConnectionIntent);
+        }
+
+        Call<MoviesList> call;
+        if (isPopular){
+            call = new NetworkUtils().getTheMoviesApiService().getPopuparMovies(NetworkUtils.key);
+        } else {
+            call = new NetworkUtils().getTheMoviesApiService().getTopRatedMovies(NetworkUtils.key);
+        }
+
+        call.enqueue(new Callback<MoviesList>() {
+            @Override
+            public void onResponse(Call<MoviesList> call, Response<MoviesList> response) {
+                MoviesList movies = response.body();
+                Log.e("STAGE 1: ", movies.getMovies().size() + " - " + movies.getMovies().get(0).title);
+
+                showMoviesGrid();
+                mLoadingIndicator.setVisibility(View.INVISIBLE);
+                mAdapter.setMoviesData(movies.getMovies());
+            }
+
+            @Override
+            public void onFailure(Call<MoviesList> call, Throwable t) {
+                showErrorMessage();
+                mLoadingIndicator.setVisibility(View.INVISIBLE);
+                Log.e("STAGE 3: ", t.getMessage());
+            }
+        });
     }
 
     private void showMoviesGrid(){
@@ -92,63 +128,6 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
         return netInfo != null && netInfo.isConnectedOrConnecting();
     }
-
-    public class FetchMoviesTask extends AsyncTask<Boolean, Void, Movie[]> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            if (isOnline()) {
-                mLoadingIndicator.setVisibility(View.VISIBLE);
-            } else {
-                Context context = MainActivity.this;
-                Intent noConnectionIntent = new Intent(context, NoInternetConnectionActivity.class);
-                startActivity(noConnectionIntent);
-            }
-
-        }
-
-        @Override
-        protected Movie[] doInBackground(Boolean... booleans) {
-
-            if (booleans.length == 0) {
-                return null;
-            }
-
-            boolean isPopular = booleans[0];
-            URL moviesRequestUrl = NetworkUtils.buildUrl(isPopular);
-            Log.e("BASE URL: ", moviesRequestUrl.toString());
-
-            try {
-                String jsonMoviesResponse = NetworkUtils.getResponseFromHttpUrl(moviesRequestUrl);
-
-                Log.e("JSON RESPONSE: ", jsonMoviesResponse);
-                Movie[] moviesData = NetworkUtils.getMoviesFromJson(jsonMoviesResponse);
-
-                return moviesData;
-
-            } catch (IOException e) {
-                e.printStackTrace();
-                return null;
-            } catch (JSONException e) {
-                e.printStackTrace();
-                return null;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(Movie[] movies) {
-            mLoadingIndicator.setVisibility(View.INVISIBLE);
-            if(movies != null) {
-                showMoviesGrid();
-                mAdapter.setMoviesData(movies);
-            } else {
-                showErrorMessage();
-            }
-
-        }
-    }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

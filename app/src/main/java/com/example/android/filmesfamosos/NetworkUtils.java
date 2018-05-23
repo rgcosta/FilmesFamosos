@@ -10,6 +10,9 @@ import java.io.IOException;
 import android.net.Uri;
 import android.util.Log;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -20,19 +23,42 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Scanner;
 
+import retrofit2.Call;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.http.GET;
+
 
 public class NetworkUtils {
 
     final static String MOVIES_BASE_URL =
-            "http://api.themoviedb.org/3";
+            "http://api.themoviedb.org/3/";     //Terminar com / para não causar Exception no Retrofit2
 
     final static String API_KEY = "api_key";
     final static String key = "b6e57ef91d7c501bb8a54b450f695d97";               //INSERIR API KEY AQUI.
-    final static String POPULAR_PATH = "/movie/popular";
-    final static String RATED_PATH = "/movie/top_rated";
+    final static String POPULAR_PATH = "movie/popular";
+    final static String RATED_PATH = "movie/top_rated";
 
-    static String MOVIES_URL;
+    final static String IMG_SIZE = "/w780/";    //options: "w92", "w154", "w185", "w342", "w500", "w780" ou "original"
 
+    private final Retrofit retrofit;
+
+    public NetworkUtils(){
+        this.retrofit = new Retrofit.Builder()
+                .baseUrl(MOVIES_BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+    }
+
+
+    public TheMoviesApiService getTheMoviesApiService(){
+        return this.retrofit.create(TheMoviesApiService.class);
+    }
+
+    /* Functions were removed after implementation of Retrofit library
+    **
+    ** Left just for studies purposes.
+    *
 
     public static URL buildUrl(boolean isPopular) {
         if (isPopular)
@@ -54,13 +80,13 @@ public class NetworkUtils {
         return url;
     }
 
-    /**
+
      * This method returns the entire result from the HTTP response.
      *
      * @param url The URL to fetch the HTTP response from.
      * @return The contents of the HTTP response.
      * @throws IOException Related to network and stream reading
-     */
+
     public static String getResponseFromHttpUrl(URL url) throws IOException {
         HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
         try {
@@ -88,7 +114,7 @@ public class NetworkUtils {
         final String OVERVIEW = "overview";
         final String VOTE_AVERAGE = "vote_average";
         final String RELEASE_DATE = "release_date";
-        final String IMG_SIZE = "/w780/";    //options: "w92", "w154", "w185", "w342", "w500", "w780" ou "original"
+        //final String IMG_SIZE = "/w780/";    //options: "w92", "w154", "w185", "w342", "w500", "w780" ou "original"
 
         JSONObject moviesJsonObj = new JSONObject(jsonString);
         JSONArray moviesArray = moviesJsonObj.getJSONArray(RESULTS_ARRAY);
@@ -108,4 +134,5 @@ public class NetworkUtils {
 
         return moviesData;
     }
+    */
 }
