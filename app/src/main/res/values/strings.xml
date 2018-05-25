@@ -16,4 +16,5 @@
     <string name="desc_movies_grid">Catalogo de filmes.</string>
     <string name="movie_pic">Image de divulgação do filme.</string>
     <string name="movie_poster">Poster do filme.</string>
+    <string name="movie_trailer">Imagens de trailers do filme.</string>
 </resources>

@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-
-
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
     <android.support.constraint.ConstraintLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
@@ -149,17 +147,75 @@
             app:layout_constraintTop_toBottomOf="@+id/cv_overview">
 
             <TextView
+                android:layout_width="59dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:text="Trailer"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <ProgressBar
+                android:id="@+id/pb_loading_trailers_indicator"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:layout_gravity="center"
+                android:visibility="invisible"/>
+
+            <android.support.v7.widget.RecyclerView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Trailer"
-                android:textStyle="bold"
-                android:textSize="16sp"
-                android:layout_margin="8dp"/>
+                android:id="@+id/rv_trailers"
+                android:orientation="horizontal"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginBottom="8dp">
+
+            </android.support.v7.widget.RecyclerView>
 
 
         </android.support.v7.widget.CardView>
 
 
+        <android.support.v7.widget.CardView
+            android:id="@+id/cv_reviews"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:minHeight="100dp"
+            android:background="@android:color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cv_trailers">
+
+            <ProgressBar
+                android:id="@+id/pb_loading_reviews_indicator"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:layout_gravity="center"
+                android:visibility="invisible"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Reviews"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:layout_margin="8dp"/>
+
+            <android.support.v7.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:id="@+id/rv_reviews"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginBottom="8dp"
+                android:nestedScrollingEnabled="false"/>
+
+        </android.support.v7.widget.CardView>
 
 
     </android.support.constraint.ConstraintLayout>

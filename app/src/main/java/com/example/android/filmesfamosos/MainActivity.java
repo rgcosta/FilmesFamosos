@@ -28,6 +28,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.example.android.filmesfamosos.NetworkUtils.*;
+
 public class MainActivity extends AppCompatActivity implements MoviesAdapter.MoviesOnClickHandler {
 
     private MoviesAdapter mAdapter;
@@ -59,12 +61,13 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         mMoviesGrid.setAdapter(mAdapter);
 
         loadMoviesData(true);
+
+
     }
 
     private void loadMoviesData(boolean isPopular){
-        //showMoviesGrid();
 
-        if (isOnline()) {
+        if (isOnline(this)) {
             mLoadingIndicator.setVisibility(View.VISIBLE);
         } else {
             Context context = MainActivity.this;
@@ -74,16 +77,16 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
 
         Call<MoviesList> call;
         if (isPopular){
-            call = new NetworkUtils().getTheMoviesApiService().getPopuparMovies(NetworkUtils.key);
+            call = new NetworkUtils().getTheMoviesApiService().getPopuparMovies(key);
         } else {
-            call = new NetworkUtils().getTheMoviesApiService().getTopRatedMovies(NetworkUtils.key);
+            call = new NetworkUtils().getTheMoviesApiService().getTopRatedMovies(key);
         }
 
         call.enqueue(new Callback<MoviesList>() {
             @Override
             public void onResponse(Call<MoviesList> call, Response<MoviesList> response) {
                 MoviesList movies = response.body();
-                Log.e("STAGE 1: ", movies.getMovies().size() + " - " + movies.getMovies().get(0).title);
+                Log.e("STAGE 1: ", call.request().url().toString());
 
                 showMoviesGrid();
                 mLoadingIndicator.setVisibility(View.INVISIBLE);
@@ -113,20 +116,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
     public void onClick(Movie simpleMovie) {
         Intent intent = new Intent(this, DetailActivity.class);
         intent.putExtra(Intent.EXTRA_TEXT, simpleMovie);
-        /*
-        intent.putExtra(Intent.EXTRA_TEXT + "_title", simpleMovie.mTitle);
-        intent.putExtra(Intent.EXTRA_TEXT + "_poster", simpleMovie.mImgUrl);
-        intent.putExtra(Intent.EXTRA_TEXT + "_overview", simpleMovie.mOverview);
-        intent.putExtra(Intent.EXTRA_TEXT + "_voteAverage", simpleMovie.mVoteAverage);
-        intent.putExtra(Intent.EXTRA_TEXT + "_releaseDate", simpleMovie.mReleaseDate);
-        */
         startActivity(intent);
-    }
-
-    public boolean isOnline() {
-        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo netInfo = cm.getActiveNetworkInfo();
-        return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 
     @Override

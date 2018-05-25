@@ -2,6 +2,7 @@ package com.example.android.filmesfamosos;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.RecyclerView.OnScrollListener;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +32,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
     List<Movie> mMovies = new ArrayList<>();
 
     MoviesOnClickHandler mClickHandler;
+
 
     public interface MoviesOnClickHandler {
         void onClick(Movie simpleMovie);
@@ -76,14 +78,14 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
         notifyDataSetChanged();
     }
 
-
     public class MovieViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         ImageView mImageView;
 
+
         public MovieViewHolder(View itemView){
             super(itemView);
-            this.mImageView = itemView.findViewById(R.id.imageView);
+            this.mImageView = itemView.findViewById(R.id.imageView_movie);
             itemView.setOnClickListener(this);
         }
 

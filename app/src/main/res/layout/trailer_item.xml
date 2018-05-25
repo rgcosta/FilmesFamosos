@@ -1,17 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
 
     <ImageView
-        android:id="@+id/imageView_movie"
+        android:id="@+id/imageView_trailer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="1dp"
         android:adjustViewBounds="true"
-        android:contentDescription="@string/desc_movies_grid" />
-        <!--app:srcCompat="@mipmap/ic_launcher" -->
+        android:contentDescription="@string/movie_trailer" />
 </FrameLayout>

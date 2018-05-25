@@ -7,6 +7,9 @@ package com.example.android.filmesfamosos;
 
 import java.io.IOException;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.util.Log;
 
@@ -38,6 +41,8 @@ public class NetworkUtils {
     final static String key = "b6e57ef91d7c501bb8a54b450f695d97";               //INSERIR API KEY AQUI.
     final static String POPULAR_PATH = "movie/popular";
     final static String RATED_PATH = "movie/top_rated";
+    final static String MOVIE_TRAILERS = "movie/{id}/videos";
+    final static String MOVIE_REVIEWS = "movie/{id}/reviews";
 
     final static String IMG_SIZE = "/w780/";    //options: "w92", "w154", "w185", "w342", "w500", "w780" ou "original"
 
@@ -53,6 +58,12 @@ public class NetworkUtils {
 
     public TheMoviesApiService getTheMoviesApiService(){
         return this.retrofit.create(TheMoviesApiService.class);
+    }
+
+    public static boolean isOnline(Context context) {
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 
     /* Functions were removed after implementation of Retrofit library
