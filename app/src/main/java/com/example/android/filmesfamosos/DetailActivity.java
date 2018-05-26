@@ -2,6 +2,7 @@ package com.example.android.filmesfamosos;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -9,11 +10,15 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -172,4 +177,33 @@ public class DetailActivity extends AppCompatActivity implements TrailersAdapter
         AlertDialog dialog = builder.create();
         dialog.show();
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.movie_detail, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int itemSelected = item.getItemId();
+
+        if (itemSelected == R.id.favorite){
+            item.setChecked(!item.isChecked());
+            if (item.isChecked()){
+                item.setIcon(R.drawable.ic_favorite_red_24dp);
+                Toast.makeText(this, "Adicionado aos favoritos", Toast.LENGTH_SHORT).show();
+                return true;
+            } else {
+                item.setIcon(R.drawable.ic_favorite_border_red_24dp);
+                Toast.makeText(this, "Removido dos favoritos", Toast.LENGTH_SHORT).show();
+                return true;
+            }
+        }
+
+
+        return super.onOptionsItemSelected(item);
+    }
+
 }

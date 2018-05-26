@@ -17,4 +17,8 @@
     <string name="movie_pic">Image de divulgação do filme.</string>
     <string name="movie_poster">Poster do filme.</string>
     <string name="movie_trailer">Imagens de trailers do filme.</string>
+
+    <!-- String referente a activity_detail.xml
+    -->
+    <string name="favorite">Favorito</string>
 </resources>
