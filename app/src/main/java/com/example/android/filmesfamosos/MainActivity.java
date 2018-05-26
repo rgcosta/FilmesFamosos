@@ -38,6 +38,9 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
     private TextView mErrorDisplay;
     private ProgressBar mLoadingIndicator;
 
+    private boolean isTopRated;
+    private static final String IS_TOP_RATED_KEY = "is_top_rated_key";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,12 +63,15 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         this.mAdapter = new MoviesAdapter(this);
         mMoviesGrid.setAdapter(mAdapter);
 
-        loadMoviesData(true);
+        if (savedInstanceState != null){
+            this.isTopRated = savedInstanceState.getBoolean(IS_TOP_RATED_KEY);
+        }
+        loadMoviesData(isTopRated);
 
 
     }
 
-    private void loadMoviesData(boolean isPopular){
+    private void loadMoviesData(boolean isTopRated){
 
         if (isOnline(this)) {
             mLoadingIndicator.setVisibility(View.VISIBLE);
@@ -76,10 +82,11 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         }
 
         Call<MoviesList> call;
-        if (isPopular){
-            call = new NetworkUtils().getTheMoviesApiService().getPopuparMovies(key);
-        } else {
+        if (isTopRated){
             call = new NetworkUtils().getTheMoviesApiService().getTopRatedMovies(key);
+        } else {
+            call = new NetworkUtils().getTheMoviesApiService().getPopuparMovies(key);
+
         }
 
         call.enqueue(new Callback<MoviesList>() {
@@ -132,15 +139,23 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
 
         if (menuItemSelected == R.id.popular){
             mAdapter.setMoviesData(null);
-            loadMoviesData(true);
+            loadMoviesData(false);
+            this.isTopRated = false;
             return true;
         }
         else if (menuItemSelected == R.id.top_rated){
             mAdapter.setMoviesData(null);
-            loadMoviesData(false);
+            loadMoviesData(true);
+            this.isTopRated = true;
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle savedInstanceState) {
+        savedInstanceState.putBoolean(IS_TOP_RATED_KEY, isTopRated);
+        super.onSaveInstanceState(savedInstanceState);
     }
 }

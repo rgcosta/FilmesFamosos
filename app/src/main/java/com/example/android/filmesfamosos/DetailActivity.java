@@ -45,6 +45,7 @@ public class DetailActivity extends AppCompatActivity implements TrailersAdapter
     private ReviewsAdapter mReviewAdapter;
     private RecyclerView mReviewDisplay;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
