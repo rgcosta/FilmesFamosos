@@ -12,7 +12,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity
+            android:name=".MainActivity"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -27,6 +29,10 @@
                 android:value=".MainActivity" />
         </activity>
         <activity android:name=".NoInternetConnectionActivity"></activity>
+        <provider
+            android:name="com.example.android.filmesfamosos.data.FavContentProvider"
+            android:authorities="com.example.android.filmesfamosos"
+            android:exported="false"/>
     </application>
 
 </manifest>

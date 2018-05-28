@@ -1,7 +1,10 @@
 package com.example.android.filmesfamosos;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.v7.app.AlertDialog;
@@ -20,6 +23,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.android.filmesfamosos.data.MovieContract;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -36,6 +40,8 @@ import static com.example.android.filmesfamosos.NetworkUtils.isOnline;
 public class DetailActivity extends AppCompatActivity implements TrailersAdapter.TrailersOnClickHandler,
         ReviewsAdapter.ReviewsOnClickHandler {
 
+    private static final String TAG = DetailActivity.class.getSimpleName();
+
     private TextView mTitle;
     private TextView mOverview;
     private TextView mReleaseDate;
@@ -49,6 +55,9 @@ public class DetailActivity extends AppCompatActivity implements TrailersAdapter
 
     private ReviewsAdapter mReviewAdapter;
     private RecyclerView mReviewDisplay;
+
+    private int movieId;
+    private String posterPath;
 
 
     @Override
@@ -88,10 +97,12 @@ public class DetailActivity extends AppCompatActivity implements TrailersAdapter
                 Movie movieDetailed = intent.getParcelableExtra(Intent.EXTRA_TEXT);
 
                 this.mTitle.setText(movieDetailed.getTitle());
+                this.posterPath = movieDetailed.getPosterPath();    //in order to save into db.
                 Picasso.with(this).load(movieDetailed.getFullPosterPath()).into(mMoviePoster);
                 this.mOverview.setText(movieDetailed.getOverview());
                 this.mReleaseDate.setText(movieDetailed.getReleaseDate());
                 this.mVoteAverage.setText(String.valueOf(movieDetailed.getVoteAverage()));
+                this.movieId = movieDetailed.getId();   //in order to save into db
                 loadTrailers(movieDetailed.getId());
                 loadReviews(movieDetailed.getId());
             }
@@ -103,9 +114,7 @@ public class DetailActivity extends AppCompatActivity implements TrailersAdapter
         if (isOnline(this)) {
             mLoadingTrailersIndicator.setVisibility(View.VISIBLE);
         } else {
-            Context context = DetailActivity.this;
-            Intent noConnectionIntent = new Intent(context, NoInternetConnectionActivity.class);
-            startActivity(noConnectionIntent);
+            mReviewAdapter.setReviewsData(null);
         }
 
         Call<TrailersList> call = new NetworkUtils().getTheMoviesApiService().getMovieTrailers(id, key);
@@ -116,9 +125,15 @@ public class DetailActivity extends AppCompatActivity implements TrailersAdapter
                 mLoadingTrailersIndicator.setVisibility(View.INVISIBLE);
                 Log.e("TRAILER 1: ", call.request().url().toString());
 
-                TrailersList trailerListObj = response.body();
-                if (trailerListObj.getTrailers().size() > 0)
-                    mTrailerAdapter.setTrailersData(trailerListObj.getTrailers());
+                if (response.isSuccessful()) {  //evita erro 502 bad server
+                    TrailersList trailerListObj = response.body();
+                    if (trailerListObj.getTrailers().size() > 0) {
+                        mTrailerAdapter.setTrailersData(trailerListObj.getTrailers());
+                    }
+                } else {
+                    Log.e(TAG, String.valueOf(response.code()));
+                }
+
             }
 
             @Override
@@ -134,9 +149,7 @@ public class DetailActivity extends AppCompatActivity implements TrailersAdapter
         if (isOnline(this)) {
             mLoadingReviewsIndicator.setVisibility(View.VISIBLE);
         } else {
-            Context context = DetailActivity.this;
-            Intent noConnectionIntent = new Intent(context, NoInternetConnectionActivity.class);
-            startActivity(noConnectionIntent);
+            mReviewAdapter.setReviewsData(null);
         }
 
         Call<ReviewsList> call = new NetworkUtils().getTheMoviesApiService().getMovieReviews(id, key);
@@ -145,11 +158,16 @@ public class DetailActivity extends AppCompatActivity implements TrailersAdapter
             @Override
             public void onResponse(Call<ReviewsList> call, Response<ReviewsList> response) {
                 mLoadingReviewsIndicator.setVisibility(View.INVISIBLE);
-                Log.e("REVIEW 1: ", call.request().url().toString());
+                Log.e("REVIEW 1: ", call.request().url().toString() + " - " + response.code() );
 
-                ReviewsList trailerListObj = response.body();
-                if (trailerListObj.getReviews().size() > 0)
-                    mReviewAdapter.setReviewsData(trailerListObj.getReviews());
+                if (response.isSuccessful()) {  //evita erro 502 bad server
+                    ReviewsList trailerListObj = response.body();
+                    if (trailerListObj.getReviews().size() > 0) {
+                        mReviewAdapter.setReviewsData(trailerListObj.getReviews());
+                    } else {
+                        Log.e(TAG, String.valueOf(response.code()));
+                    }
+                }
             }
 
             @Override
@@ -179,31 +197,89 @@ public class DetailActivity extends AppCompatActivity implements TrailersAdapter
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+        public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.movie_detail, menu);
+
         return true;
     }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+
+        Cursor cursor = getContentResolver().query(MovieContract.FavEntry.CONTENT_URI,
+                null,
+                "movie_id=?",
+                new String[]{String.valueOf(movieId)},
+                null);
+
+        if (cursor.moveToFirst()){
+            MenuItem menuItem = menu.findItem(R.id.favorite);
+            menuItem.setChecked(true);
+            menuItem.setIcon(R.drawable.ic_favorite_red_24dp);
+            return true;
+        }
+
+        return super.onPrepareOptionsMenu(menu);
+
+    }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int itemSelected = item.getItemId();
 
         if (itemSelected == R.id.favorite){
+
             item.setChecked(!item.isChecked());
             if (item.isChecked()){
+                addMovieToFavorite();
                 item.setIcon(R.drawable.ic_favorite_red_24dp);
-                Toast.makeText(this, "Adicionado aos favoritos", Toast.LENGTH_SHORT).show();
                 return true;
             } else {
+                removeMovieFromFavorite();
                 item.setIcon(R.drawable.ic_favorite_border_red_24dp);
-                Toast.makeText(this, "Removido dos favoritos", Toast.LENGTH_SHORT).show();
                 return true;
             }
         }
 
-
         return super.onOptionsItemSelected(item);
+    }
+
+    private void removeMovieFromFavorite() {
+
+        String stringMovieId = Integer.toString(movieId);
+        Uri uri = MovieContract.FavEntry.CONTENT_URI;
+        uri = uri.buildUpon().appendPath(stringMovieId).build();
+
+        int moviesRemoved = getContentResolver().delete(uri, null, null);
+
+        if (moviesRemoved > 0) {
+            Toast.makeText(this, "Removido dos favoritos", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    private void addMovieToFavorite() {
+        //Retrieve info from the UI
+        String title = mTitle.getText().toString();
+        String overview = mOverview.getText().toString();
+        String releaseDate = mReleaseDate.getText().toString();
+        double voteAverage = Double.parseDouble(mVoteAverage.getText().toString());
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(MovieContract.FavEntry.COLUMN_MOVIE_ID, movieId);
+        contentValues.put(MovieContract.FavEntry.COLUMN_TITLE, title);
+        contentValues.put(MovieContract.FavEntry.COLUMN_POSTER_PATH, posterPath);
+        contentValues.put(MovieContract.FavEntry.COLUMN_OVERVIEW, overview);
+        contentValues.put(MovieContract.FavEntry.COLUMN_RELEASE_DATE, releaseDate);
+        contentValues.put(MovieContract.FavEntry.COLUMN_VOTE_AVERAGE, voteAverage);
+
+        Uri uri = getContentResolver().insert(MovieContract.FavEntry.CONTENT_URI, contentValues);
+
+        if (uri != null){
+            Toast.makeText(this, "Adicionado aos favoritos", Toast.LENGTH_SHORT).show();
+        }
     }
 
 }

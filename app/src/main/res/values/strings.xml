@@ -21,4 +21,5 @@
     <!-- String referente a activity_detail.xml
     -->
     <string name="favorite">Favorito</string>
+    <string name="favorites">Favoritos</string>
 </resources>
