@@ -1,17 +1,19 @@
-package com.example.android.filmesfamosos;
+package com.example.android.filmesfamosos.api;
 
-import java.util.List;
+import com.example.android.filmesfamosos.models.MoviesList;
+import com.example.android.filmesfamosos.models.ReviewsList;
+import com.example.android.filmesfamosos.models.TrailersList;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
-import static com.example.android.filmesfamosos.NetworkUtils.API_KEY;
-import static com.example.android.filmesfamosos.NetworkUtils.MOVIE_TRAILERS;
-import static com.example.android.filmesfamosos.NetworkUtils.MOVIE_REVIEWS;
-import static com.example.android.filmesfamosos.NetworkUtils.POPULAR_PATH;
-import static com.example.android.filmesfamosos.NetworkUtils.RATED_PATH;
+import static com.example.android.filmesfamosos.utils.NetworkUtils.API_KEY;
+import static com.example.android.filmesfamosos.utils.NetworkUtils.MOVIE_TRAILERS;
+import static com.example.android.filmesfamosos.utils.NetworkUtils.MOVIE_REVIEWS;
+import static com.example.android.filmesfamosos.utils.NetworkUtils.POPULAR_PATH;
+import static com.example.android.filmesfamosos.utils.NetworkUtils.RATED_PATH;
 
 public interface TheMoviesApiService {
 

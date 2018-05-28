@@ -1,11 +1,8 @@
 package com.example.android.filmesfamosos;
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -18,15 +15,21 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.android.filmesfamosos.adapters.ReviewsAdapter;
+import com.example.android.filmesfamosos.adapters.TrailersAdapter;
 import com.example.android.filmesfamosos.data.MovieContract;
+import com.example.android.filmesfamosos.models.Movie;
+import com.example.android.filmesfamosos.models.Review;
+import com.example.android.filmesfamosos.models.ReviewsList;
+import com.example.android.filmesfamosos.models.Trailer;
+import com.example.android.filmesfamosos.models.TrailersList;
+import com.example.android.filmesfamosos.utils.NetworkUtils;
 import com.squareup.picasso.Picasso;
-
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -34,8 +37,8 @@ import retrofit2.Response;
 
 import static android.support.v7.widget.LinearLayoutManager.HORIZONTAL;
 import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
-import static com.example.android.filmesfamosos.NetworkUtils.*;
-import static com.example.android.filmesfamosos.NetworkUtils.isOnline;
+import static com.example.android.filmesfamosos.utils.NetworkUtils.*;
+import static com.example.android.filmesfamosos.utils.NetworkUtils.isOnline;
 
 public class DetailActivity extends AppCompatActivity implements TrailersAdapter.TrailersOnClickHandler,
         ReviewsAdapter.ReviewsOnClickHandler {
@@ -49,6 +52,7 @@ public class DetailActivity extends AppCompatActivity implements TrailersAdapter
     private ImageView mMoviePoster;
     private ProgressBar mLoadingTrailersIndicator;
     private ProgressBar mLoadingReviewsIndicator;
+    private RatingBar mVoteRatingBar;
 
     private TrailersAdapter mTrailerAdapter;
     private RecyclerView mTrailerDisplay;
@@ -74,6 +78,7 @@ public class DetailActivity extends AppCompatActivity implements TrailersAdapter
         this.mTrailerDisplay = findViewById(R.id.rv_trailers);
         this.mLoadingReviewsIndicator = findViewById(R.id.pb_loading_reviews_indicator);
         this.mReviewDisplay = findViewById(R.id.rv_reviews);
+        this.mVoteRatingBar = findViewById(R.id.ratingBar);
 
         LinearLayoutManager trailerLayoutManager = new LinearLayoutManager(this, HORIZONTAL, false);
         mTrailerDisplay.setLayoutManager(trailerLayoutManager);
@@ -102,6 +107,7 @@ public class DetailActivity extends AppCompatActivity implements TrailersAdapter
                 this.mOverview.setText(movieDetailed.getOverview());
                 this.mReleaseDate.setText(movieDetailed.getReleaseDate());
                 this.mVoteAverage.setText(String.valueOf(movieDetailed.getVoteAverage()));
+                this.mVoteRatingBar.setRating((float) movieDetailed.getVoteAverage());
                 this.movieId = movieDetailed.getId();   //in order to save into db
                 loadTrailers(movieDetailed.getId());
                 loadReviews(movieDetailed.getId());
@@ -138,7 +144,7 @@ public class DetailActivity extends AppCompatActivity implements TrailersAdapter
 
             @Override
             public void onFailure(Call<TrailersList> call, Throwable t) {
-                Log.e("Can't load trailers: ", t.getMessage());
+                Log.e(TAG, "Can't load trailers: " + t.getMessage());
             }
         });
     }
@@ -172,7 +178,7 @@ public class DetailActivity extends AppCompatActivity implements TrailersAdapter
 
             @Override
             public void onFailure(Call<ReviewsList> call, Throwable t) {
-                Log.e("Can't load reviews: ", t.getMessage());
+                Log.e(TAG, "Can't load reviews: " + t.getMessage());
             }
         });
     }

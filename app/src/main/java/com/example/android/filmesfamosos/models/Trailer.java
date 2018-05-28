@@ -1,4 +1,4 @@
-package com.example.android.filmesfamosos;
+package com.example.android.filmesfamosos.models;
 
 import com.google.gson.annotations.Expose;
 

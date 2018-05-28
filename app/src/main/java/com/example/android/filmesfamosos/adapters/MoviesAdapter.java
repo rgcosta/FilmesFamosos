@@ -1,14 +1,14 @@
-package com.example.android.filmesfamosos;
+package com.example.android.filmesfamosos.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.RecyclerView.OnScrollListener;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Toast;
 
+import com.example.android.filmesfamosos.R;
+import com.example.android.filmesfamosos.models.Movie;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;

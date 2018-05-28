@@ -4,9 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.database.Cursor;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.os.AsyncTask;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
@@ -22,19 +19,18 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.example.android.filmesfamosos.adapters.FavMoviesAdapter;
+import com.example.android.filmesfamosos.adapters.MoviesAdapter;
 import com.example.android.filmesfamosos.data.MovieContract;
-
-import org.json.JSONException;
-
-import java.io.IOException;
-import java.net.URL;
-import java.util.List;
+import com.example.android.filmesfamosos.models.Movie;
+import com.example.android.filmesfamosos.models.MoviesList;
+import com.example.android.filmesfamosos.utils.NetworkUtils;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static com.example.android.filmesfamosos.NetworkUtils.*;
+import static com.example.android.filmesfamosos.utils.NetworkUtils.*;
 
 public class MainActivity extends AppCompatActivity
         implements MoviesAdapter.MoviesOnClickHandler, LoaderManager.LoaderCallbacks<Cursor>,
@@ -64,7 +60,6 @@ public class MainActivity extends AppCompatActivity
 
         this.mErrorDisplay = findViewById(R.id.tv_error_display);
         this.mLoadingIndicator = findViewById(R.id.pb_loading_indicator);
-
         this.mMoviesGrid = findViewById(R.id.rv_movies);
 
         GridLayoutManager layoutManager = new GridLayoutManager(this,2);

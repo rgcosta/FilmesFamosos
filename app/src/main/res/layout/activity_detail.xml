@@ -63,6 +63,17 @@
                     tools:layout_editor_absoluteX="207dp"
                     tools:text="7.5" />
 
+                <RatingBar
+                    android:id="@+id/ratingBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:isIndicator="true"
+                    android:progressBackgroundTint="@color/colorAccent"
+                    style="@style/Base.Widget.AppCompat.RatingBar.Small"
+                    android:numStars="10"
+                    app:layout_constraintStart_toStartOf="@+id/tv_rate_average"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_rate_average" />
+
                 <TextView
                     android:id="@+id/tv_release_date_label"
                     android:layout_width="wrap_content"

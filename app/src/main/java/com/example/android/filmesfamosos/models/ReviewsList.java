@@ -1,5 +1,6 @@
-package com.example.android.filmesfamosos;
+package com.example.android.filmesfamosos.models;
 
+import com.example.android.filmesfamosos.models.Review;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 

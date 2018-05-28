@@ -1,50 +1,33 @@
-package com.example.android.filmesfamosos;
+package com.example.android.filmesfamosos.utils;
 
 /**
  * Created by Romulo on 16/04/2018.
  */
 
 
-import java.io.IOException;
-
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.Uri;
-import android.util.Log;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.example.android.filmesfamosos.api.TheMoviesApiService;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Scanner;
-
-import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-import retrofit2.http.GET;
 
 
 public class NetworkUtils {
 
-    final static String MOVIES_BASE_URL =
+    public final static String MOVIES_BASE_URL =
             "http://api.themoviedb.org/3/";     //Terminar com / para não causar Exception no Retrofit2
 
-    final static String API_KEY = "api_key";
-    final static String key = "b6e57ef91d7c501bb8a54b450f695d97";               //INSERIR API KEY AQUI.
-    final static String POPULAR_PATH = "movie/popular";
-    final static String RATED_PATH = "movie/top_rated";
-    final static String MOVIE_TRAILERS = "movie/{id}/videos";
-    final static String MOVIE_REVIEWS = "movie/{id}/reviews";
+    public final static String API_KEY = "api_key";
+    public final static String key = "b6e57ef91d7c501bb8a54b450f695d97";               //INSERIR API KEY AQUI.
+    public final static String POPULAR_PATH = "movie/popular";
+    public final static String RATED_PATH = "movie/top_rated";
+    public final static String MOVIE_TRAILERS = "movie/{id}/videos";
+    public final static String MOVIE_REVIEWS = "movie/{id}/reviews";
 
-    final static String IMG_SIZE = "/w780/";    //options: "w92", "w154", "w185", "w342", "w500", "w780" ou "original"
+    public final static String IMG_SIZE = "/w780/";    //options: "w92", "w154", "w185", "w342", "w500", "w780" ou "original"
 
     private final Retrofit retrofit;
 

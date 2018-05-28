@@ -1,8 +1,9 @@
-package com.example.android.filmesfamosos;
+package com.example.android.filmesfamosos.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.example.android.filmesfamosos.utils.NetworkUtils;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
