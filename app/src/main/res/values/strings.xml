@@ -22,4 +22,8 @@
     -->
     <string name="favorite">Favorito</string>
     <string name="favorites">Favoritos</string>
+    <string name="release_date_label">Release Date:</string>
+    <string name="overview_label">Overview</string>
+    <string name="trailer_label">Trailer</string>
+    <string name="review_label">Review</string>
 </resources>

@@ -15,7 +15,7 @@ xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_height="wrap_content"
         tools:text="Full Name"
         android:textStyle="italic"
-        android:textSize="16sp"
+        android:textSize="@dimen/text_size"
         android:layout_marginTop="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"/>
@@ -26,7 +26,7 @@ xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
-        android:textSize="18sp"
+        android:textSize="@dimen/text_size"
         android:lines="4"
         tools:text="dsu hdusadiuhasud has dhlas hdhsajkdhsajdkjashldkjashd" />
 

@@ -65,21 +65,24 @@
 
                 <RatingBar
                     android:id="@+id/ratingBar"
+                    style="@style/Base.Widget.AppCompat.RatingBar.Small"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
                     android:isIndicator="true"
-                    android:progressBackgroundTint="@color/colorAccent"
-                    style="@style/Base.Widget.AppCompat.RatingBar.Small"
                     android:numStars="10"
+                    android:progressBackgroundTint="@color/colorAccent"
+                    app:layout_constraintBottom_toTopOf="@+id/tv_release_date_label"
                     app:layout_constraintStart_toStartOf="@+id/tv_rate_average"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_rate_average" />
+                    app:layout_constraintTop_toBottomOf="@+id/tv_rate_average"
+                    app:layout_constraintVertical_bias="0.0" />
 
                 <TextView
                     android:id="@+id/tv_release_date_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="1dp"
-                    android:text="Release Date:"
+                    android:text="@string/release_date_label"
                     android:textColor="@color/colorPrimary"
                     android:textSize="14sp"
                     app:layout_constraintBottom_toTopOf="@+id/tv_release_date"
@@ -94,7 +97,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="@+id/tv_release_date_label"
                     tools:text="25/10/2017"
-                    android:textSize="16sp"/>
+                    android:textSize="@dimen/text_size"/>
 
 
             </android.support.constraint.ConstraintLayout>
@@ -116,20 +119,20 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Overview"
+                android:text="@string/overview_label"
                 android:textStyle="bold"
-                android:textSize="16sp"
-                android:layout_margin="8dp"/>
+                style="@style/TextAppearance.AppCompat.Subhead"
+                android:layout_margin="@dimen/text_subtitle_margin"/>
 
             <TextView
                 android:id="@+id/tv_overview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="32dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginBottom="8dp"
-                android:textSize="18sp"
+                android:layout_marginLeft="@dimen/text_marginLeft"
+                android:layout_marginTop="@dimen/text_marginTop"
+                android:layout_marginRight="@dimen/text_marginRight"
+                android:layout_marginBottom="@dimen/text_marginBottom"
+                android:textSize="@dimen/text_size"
                 tools:text="dsu hdusadiuhasud has dhlas hdhsajkdhsajdkjashldkjashd"/>
 
         </android.support.v7.widget.CardView>
@@ -149,15 +152,15 @@
             <TextView
                 android:layout_width="59dp"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:text="Trailer"
-                android:textSize="16sp"
+                android:layout_margin="@dimen/text_subtitle_margin"
+                android:text="@string/trailer_label"
+                style="@style/TextAppearance.AppCompat.Subhead"
                 android:textStyle="bold" />
 
             <ProgressBar
                 android:id="@+id/pb_loading_trailers_indicator"
-                android:layout_width="42dp"
-                android:layout_height="42dp"
+                android:layout_width="@dimen/square_progressive_bar"
+                android:layout_height="@dimen/square_progressive_bar"
                 android:layout_gravity="center"
                 android:visibility="invisible"/>
 
@@ -182,37 +185,39 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
             android:minHeight="100dp"
             android:background="@android:color/white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/cv_trailers">
+            app:layout_constraintTop_toBottomOf="@+id/cv_trailers"
+            app:layout_constraintBottom_toBottomOf="parent">
 
             <ProgressBar
                 android:id="@+id/pb_loading_reviews_indicator"
-                android:layout_width="42dp"
-                android:layout_height="42dp"
+                android:layout_width="@dimen/square_progressive_bar"
+                android:layout_height="@dimen/square_progressive_bar"
                 android:layout_gravity="center"
                 android:visibility="invisible"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Reviews"
+                android:text="@string/review_label"
                 android:textStyle="bold"
-                android:textSize="16sp"
-                android:layout_margin="8dp"/>
+                style="@style/TextAppearance.AppCompat.Subhead"
+                android:layout_margin="@dimen/text_subtitle_margin"/>
 
             <android.support.v7.widget.RecyclerView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:id="@+id/rv_reviews"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="32dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginBottom="8dp"
+                android:layout_marginLeft="@dimen/text_marginLeft"
+                android:layout_marginTop="@dimen/text_marginTop"
+                android:layout_marginRight="@dimen/text_marginRight"
+                android:layout_marginBottom="@dimen/text_marginBottom"
                 android:nestedScrollingEnabled="false"/>
 
         </android.support.v7.widget.CardView>

@@ -18,13 +18,13 @@
         android:layout_height="wrap_content"
         android:padding="16dp"
         android:text="@string/error_message"
-        android:textSize="20sp"
+        android:textSize="@dimen/text_size"
         android:visibility="invisible"/>
 
     <ProgressBar
         android:id="@+id/pb_loading_indicator"
-        android:layout_width="42dp"
-        android:layout_height="42dp"
+        android:layout_width="@dimen/square_progressive_bar"
+        android:layout_height="@dimen/square_progressive_bar"
         android:layout_gravity="center"
         android:visibility="invisible"/>
 

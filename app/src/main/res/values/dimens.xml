@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="text_size">16sp</dimen>
+    <dimen name="text_marginTop">32dp</dimen>
+    <dimen name="text_marginLeft">8dp</dimen>
+    <dimen name="text_marginRight">8dp</dimen>
+    <dimen name="text_marginBottom">8dp</dimen>
+    <dimen name="text_subtitle_margin">8dp</dimen>
+    <dimen name="square_progressive_bar">42dp</dimen>
+</resources>
