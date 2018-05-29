@@ -16,6 +16,7 @@ xmlns:android="http://schemas.android.com/apk/res/android"
         tools:text="Full Name"
         android:textStyle="italic"
         android:textSize="@dimen/text_size"
+        android:textColor="@color/colorSecundarytext"
         android:layout_marginTop="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"/>
@@ -27,13 +28,14 @@ xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:textSize="@dimen/text_size"
+        android:textColor="@color/colorSecundarytext"
         android:lines="4"
         tools:text="dsu hdusadiuhasud has dhlas hdhsajkdhsajdkjashldkjashd" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@android:color/darker_gray"
+        android:background="@color/colorDivider"
         android:layout_marginTop="8dp"/>
 
 </LinearLayout>
