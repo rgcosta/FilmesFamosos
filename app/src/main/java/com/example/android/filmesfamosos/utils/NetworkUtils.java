@@ -9,6 +9,7 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
+import com.example.android.filmesfamosos.BuildConfig;
 import com.example.android.filmesfamosos.api.TheMoviesApiService;
 
 import retrofit2.Retrofit;
@@ -21,7 +22,7 @@ public class NetworkUtils {
             "http://api.themoviedb.org/3/";     //Terminar com / para não causar Exception no Retrofit2
 
     public final static String API_KEY = "api_key";
-    public final static String key = "b6e57ef91d7c501bb8a54b450f695d97";               //INSERIR API KEY AQUI.
+    public final static String key = "API_KEY_HERE";               //INSERIR API KEY AQUI.
     public final static String POPULAR_PATH = "movie/popular";
     public final static String RATED_PATH = "movie/top_rated";
     public final static String MOVIE_TRAILERS = "movie/{id}/videos";
