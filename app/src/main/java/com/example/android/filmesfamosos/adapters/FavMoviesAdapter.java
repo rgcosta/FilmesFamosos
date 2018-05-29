@@ -52,7 +52,7 @@ public class FavMoviesAdapter extends RecyclerView.Adapter<FavMoviesAdapter.FavM
 
         //Set value
         Picasso.with(mContext)
-                .load("http://image.tmdb.org/t/p" + NetworkUtils.IMG_SIZE + posterPath)
+                .load(NetworkUtils.POSTER_BASE_URL + NetworkUtils.IMG_SIZE + posterPath)
                 .into(holder.mImageView);
 
     }

@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.database.Cursor;
+import android.graphics.Point;
+import android.os.Parcelable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
@@ -11,7 +13,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -26,10 +30,14 @@ import com.example.android.filmesfamosos.models.Movie;
 import com.example.android.filmesfamosos.models.MoviesList;
 import com.example.android.filmesfamosos.utils.NetworkUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static android.webkit.ConsoleMessage.MessageLevel.LOG;
 import static com.example.android.filmesfamosos.utils.NetworkUtils.*;
 
 public class MainActivity extends AppCompatActivity
@@ -37,6 +45,7 @@ public class MainActivity extends AppCompatActivity
         FavMoviesAdapter.FavMovieOnClickHandler{
 
     private static final String TAG = MainActivity.class.getSimpleName();
+    private static final int IMG_SIZE_PIXEL = 441;  //441x662px for w780
 
     private MoviesAdapter mAdapter;
     private RecyclerView mMoviesGrid;
@@ -48,8 +57,11 @@ public class MainActivity extends AppCompatActivity
     private boolean isInFavorite;
     private static final String IS_TOP_RATED_KEY = "is_top_rated_key";
     private static final String IS_IN_FAVORITE_KEY = "is_in_favorite_key";
+    private static final String LIST_POSITION_KEY = "list_position_key";
 
     private static final int FAV_LOADER_ID = 0;
+
+    private Parcelable mScrollState;
 
     private FavMoviesAdapter mFavMovieAdapter;
 
@@ -62,11 +74,7 @@ public class MainActivity extends AppCompatActivity
         this.mLoadingIndicator = findViewById(R.id.pb_loading_indicator);
         this.mMoviesGrid = findViewById(R.id.rv_movies);
 
-        GridLayoutManager layoutManager = new GridLayoutManager(this,2);
-        int mOrientation = getResources().getConfiguration().orientation;
-        if (mOrientation == Configuration.ORIENTATION_LANDSCAPE){
-            layoutManager.setSpanCount(4);
-        }
+        GridLayoutManager layoutManager = new GridLayoutManager(this, getNumberOfColumns());
         mMoviesGrid.setLayoutManager(layoutManager);
         mMoviesGrid.setHasFixedSize(true);
 
@@ -76,6 +84,9 @@ public class MainActivity extends AppCompatActivity
         if (savedInstanceState != null){
             this.isTopRated = savedInstanceState.getBoolean(IS_TOP_RATED_KEY);
             this.isInFavorite = savedInstanceState.getBoolean(IS_IN_FAVORITE_KEY);
+            if (savedInstanceState.containsKey(LIST_POSITION_KEY)){
+                this.mScrollState = savedInstanceState.getParcelable(LIST_POSITION_KEY);
+            }
         }
 
         if (isInFavorite){
@@ -85,6 +96,16 @@ public class MainActivity extends AppCompatActivity
             loadMoviesData(isTopRated);
         }
 
+    }
+
+    private int getNumberOfColumns() {
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+
+        int widthPixels = metrics.widthPixels;
+        Log.i(TAG, "widthPixels  = " + widthPixels);
+
+        return widthPixels/IMG_SIZE_PIXEL;
     }
 
     private void loadMoviesData(boolean isTopRated){
@@ -113,12 +134,14 @@ public class MainActivity extends AppCompatActivity
         call.enqueue(new Callback<MoviesList>() {
             @Override
             public void onResponse(Call<MoviesList> call, Response<MoviesList> response) {
-                MoviesList movies = response.body();
+                //MoviesList movies = response.body();
+                MoviesList moviesData = response.body();
                 Log.e("STAGE 1: ", call.request().url().toString());
 
                 showMoviesGrid();
                 mLoadingIndicator.setVisibility(View.INVISIBLE);
-                mAdapter.setMoviesData(movies.getMovies());
+                mAdapter.setMoviesData(moviesData.getMovies());
+                mMoviesGrid.getLayoutManager().onRestoreInstanceState(mScrollState);
             }
 
             @Override
@@ -165,35 +188,39 @@ public class MainActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         int menuItemSelected = item.getItemId();
 
-        if (menuItemSelected == R.id.popular){
-            mAdapter.setMoviesData(null);
-            loadMoviesData(false);
-            this.isTopRated = false;
-            this.isInFavorite = false;
-            return true;
+        switch (menuItemSelected){
+            case (R.id.popular):
+                mAdapter.setMoviesData(null);
+                loadMoviesData(false);
+                this.isTopRated = false;
+                this.isInFavorite = false;
+                return true;
+            case (R.id.top_rated):
+                mAdapter.setMoviesData(null);
+                loadMoviesData(true);
+                this.isTopRated = true;
+                this.isInFavorite = false;
+                return true;
+            case R.id.favorites:
+                mMoviesGrid.setAdapter(mFavMovieAdapter);
+                getSupportLoaderManager().initLoader(FAV_LOADER_ID, null, this);
+                this.isInFavorite = true;
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-        else if (menuItemSelected == R.id.top_rated){
-            mAdapter.setMoviesData(null);
-            loadMoviesData(true);
-            this.isTopRated = true;
-            this.isInFavorite = false;
-            return true;
-        } else if (menuItemSelected == R.id.favorites) {
-            mMoviesGrid.setAdapter(mFavMovieAdapter);
-            getSupportLoaderManager().initLoader(FAV_LOADER_ID, null, this);
-            this.isInFavorite = true;
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
+
 
 
     @Override
     protected void onSaveInstanceState(Bundle savedInstanceState) {
         savedInstanceState.putBoolean(IS_TOP_RATED_KEY, isTopRated);
         savedInstanceState.putBoolean(IS_IN_FAVORITE_KEY, isInFavorite);
+        savedInstanceState.putParcelable(LIST_POSITION_KEY, mMoviesGrid.getLayoutManager().onSaveInstanceState());
+
         super.onSaveInstanceState(savedInstanceState);
+
     }
 
     @Override
@@ -241,7 +268,7 @@ public class MainActivity extends AppCompatActivity
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         mLoadingIndicator.setVisibility(View.INVISIBLE);
         mFavMovieAdapter.swapCursor(data);
-
+        mMoviesGrid.getLayoutManager().onRestoreInstanceState(mScrollState);
     }
 
     @Override
@@ -255,4 +282,5 @@ public class MainActivity extends AppCompatActivity
         super.onResume();
         getSupportLoaderManager().restartLoader(FAV_LOADER_ID, null, this);
     }
+
 }
