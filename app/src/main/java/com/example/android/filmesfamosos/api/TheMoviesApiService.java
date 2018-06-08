@@ -12,6 +12,7 @@ import retrofit2.http.Query;
 import static com.example.android.filmesfamosos.utils.NetworkUtils.API_KEY;
 import static com.example.android.filmesfamosos.utils.NetworkUtils.MOVIE_TRAILERS;
 import static com.example.android.filmesfamosos.utils.NetworkUtils.MOVIE_REVIEWS;
+import static com.example.android.filmesfamosos.utils.NetworkUtils.PAGE;
 import static com.example.android.filmesfamosos.utils.NetworkUtils.POPULAR_PATH;
 import static com.example.android.filmesfamosos.utils.NetworkUtils.RATED_PATH;
 

@@ -48,22 +48,37 @@ public class MainActivity extends AppCompatActivity
     private static final int IMG_SIZE_PIXEL = 441;  //441x662px for w780
 
     private MoviesAdapter mAdapter;
+    private FavMoviesAdapter mFavMovieAdapter;
     private RecyclerView mMoviesGrid;
 
     private TextView mErrorDisplay;
     private ProgressBar mLoadingIndicator;
 
-    private boolean isTopRated;
-    private boolean isInFavorite;
     private static final String IS_TOP_RATED_KEY = "is_top_rated_key";
-    private static final String IS_IN_FAVORITE_KEY = "is_in_favorite_key";
-    private static final String LIST_POSITION_KEY = "list_position_key";
+    private static final String SCROLL_POSITION_KEY = "scroll_position_key";
+    private static final String PAGE_KEY = "page_key";
+    private static final String TOTAL_PAGES_KEY = "total_pages_key";
+    private static final String POPULAR_MOVIES_LIST_KEY = "popular_movies_list_key";
+    private static final String TOP_RATED_MOVIES_LIST_KEY = "top_rated_movies_list_key";
+    private static final String SWAP_MODE_KEY = "swap_mode_key";
+
+    private static final int IS_FAVORITE_ID = 1;
+    private static final int FETCH_NEW_DATA_ID = 2;
+    private static final int REUSING_TOP_RATED_MOVIES_ID = 3;
+    private static final int REUSING_POPULAR_MOVIES_ID = 4;
+
+    private int swapMode = FETCH_NEW_DATA_ID;
+    private boolean isTopRated;
+
 
     private static final int FAV_LOADER_ID = 0;
 
     private Parcelable mScrollState;
+    private List<Movie> mMoviesPopular;
+    private List<Movie> mMoviesTopRated;
+    private int page;
+    private int totalPages;
 
-    private FavMoviesAdapter mFavMovieAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,19 +98,42 @@ public class MainActivity extends AppCompatActivity
 
         if (savedInstanceState != null){
             this.isTopRated = savedInstanceState.getBoolean(IS_TOP_RATED_KEY);
-            this.isInFavorite = savedInstanceState.getBoolean(IS_IN_FAVORITE_KEY);
-            if (savedInstanceState.containsKey(LIST_POSITION_KEY)){
-                this.mScrollState = savedInstanceState.getParcelable(LIST_POSITION_KEY);
+            this.mScrollState = savedInstanceState.getParcelable(SCROLL_POSITION_KEY);
+            this.swapMode = savedInstanceState.getInt(SWAP_MODE_KEY);
+            if (savedInstanceState.containsKey(POPULAR_MOVIES_LIST_KEY)){
+                this.mMoviesPopular = savedInstanceState.getParcelableArrayList(POPULAR_MOVIES_LIST_KEY);
+            }
+            if (savedInstanceState.containsKey(TOP_RATED_MOVIES_LIST_KEY)){
+                this.mMoviesTopRated = savedInstanceState.getParcelableArrayList(TOP_RATED_MOVIES_LIST_KEY);
             }
         }
 
-        if (isInFavorite){
-            mMoviesGrid.setAdapter(mFavMovieAdapter);
-            getSupportLoaderManager().restartLoader(FAV_LOADER_ID, null, this);
-        } else {
-            loadMoviesData(isTopRated);
-        }
+        loadMovies();
+    }
 
+    private void loadMovies() {
+
+        switch (swapMode){
+            case IS_FAVORITE_ID:
+                mMoviesGrid.setAdapter(mFavMovieAdapter);
+                getSupportLoaderManager().initLoader(FAV_LOADER_ID, null, this);
+                break;
+            case FETCH_NEW_DATA_ID:
+                loadMoviesData(isTopRated);
+                break;
+            case REUSING_TOP_RATED_MOVIES_ID:
+                Log.e(TAG, "REUSING mMoviesTopRated. Savind Data!");
+                mMoviesGrid.setAdapter(mAdapter);
+                mAdapter.setMoviesData(mMoviesTopRated);
+                break;
+            case REUSING_POPULAR_MOVIES_ID:
+                Log.e(TAG, "REUSING mMoviesPopular. Savind Data!");
+                mMoviesGrid.setAdapter(mAdapter);
+                mAdapter.setMoviesData(mMoviesPopular);
+                break;
+            default:
+                Log.e(TAG, "No swapMode Selected: " + swapMode);
+        }
     }
 
     private int getNumberOfColumns() {
@@ -108,20 +146,15 @@ public class MainActivity extends AppCompatActivity
         return widthPixels/IMG_SIZE_PIXEL;
     }
 
-    private void loadMoviesData(boolean isTopRated){
+    private void loadMoviesData(final boolean isTopRated){
 
         if (isOnline(this)) {
+            mMoviesGrid.setAdapter(mAdapter);
             mLoadingIndicator.setVisibility(View.VISIBLE);
         } else {
             Context context = MainActivity.this;
             Intent noConnectionIntent = new Intent(context, NoInternetConnectionActivity.class);
             startActivity(noConnectionIntent);
-        }
-
-        if (mMoviesGrid.getAdapter() == null){
-            mMoviesGrid.setAdapter(mAdapter);
-        } else if (mMoviesGrid.getAdapter().getClass() != MoviesAdapter.class) {
-            mMoviesGrid.setAdapter(mAdapter);
         }
 
         Call<MoviesList> call;
@@ -134,13 +167,20 @@ public class MainActivity extends AppCompatActivity
         call.enqueue(new Callback<MoviesList>() {
             @Override
             public void onResponse(Call<MoviesList> call, Response<MoviesList> response) {
-                //MoviesList movies = response.body();
-                MoviesList moviesData = response.body();
                 Log.e("STAGE 1: ", call.request().url().toString());
-
                 showMoviesGrid();
                 mLoadingIndicator.setVisibility(View.INVISIBLE);
-                mAdapter.setMoviesData(moviesData.getMovies());
+
+                MoviesList moviesData = response.body();
+                if (isTopRated) {
+                    mMoviesTopRated = moviesData.getMovies();
+                    mAdapter.setMoviesData(mMoviesTopRated);
+                    swapMode = REUSING_TOP_RATED_MOVIES_ID;
+                } else {
+                    mMoviesPopular = moviesData.getMovies();
+                    mAdapter.setMoviesData(mMoviesPopular);
+                    swapMode = REUSING_POPULAR_MOVIES_ID;
+                }
                 mMoviesGrid.getLayoutManager().onRestoreInstanceState(mScrollState);
             }
 
@@ -191,20 +231,25 @@ public class MainActivity extends AppCompatActivity
         switch (menuItemSelected){
             case (R.id.popular):
                 mAdapter.setMoviesData(null);
-                loadMoviesData(false);
                 this.isTopRated = false;
-                this.isInFavorite = false;
+                swapMode = REUSING_POPULAR_MOVIES_ID;
+                loadMovies();
                 return true;
             case (R.id.top_rated):
                 mAdapter.setMoviesData(null);
-                loadMoviesData(true);
+                if (mMoviesTopRated == null) {
+                    swapMode = FETCH_NEW_DATA_ID;
+                    this.isTopRated = true;
+                    loadMovies();
+                    return true;
+                }
                 this.isTopRated = true;
-                this.isInFavorite = false;
+                swapMode = REUSING_TOP_RATED_MOVIES_ID;
+                loadMovies();
                 return true;
             case R.id.favorites:
-                mMoviesGrid.setAdapter(mFavMovieAdapter);
-                getSupportLoaderManager().initLoader(FAV_LOADER_ID, null, this);
-                this.isInFavorite = true;
+                swapMode = IS_FAVORITE_ID;
+                loadMovies();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -216,8 +261,12 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onSaveInstanceState(Bundle savedInstanceState) {
         savedInstanceState.putBoolean(IS_TOP_RATED_KEY, isTopRated);
-        savedInstanceState.putBoolean(IS_IN_FAVORITE_KEY, isInFavorite);
-        savedInstanceState.putParcelable(LIST_POSITION_KEY, mMoviesGrid.getLayoutManager().onSaveInstanceState());
+        savedInstanceState.putParcelable(SCROLL_POSITION_KEY, mMoviesGrid.getLayoutManager().onSaveInstanceState());
+        savedInstanceState.putInt(SWAP_MODE_KEY, swapMode);
+        if (mMoviesPopular != null)
+            savedInstanceState.putParcelableArrayList(POPULAR_MOVIES_LIST_KEY, (ArrayList<? extends Parcelable>) mMoviesPopular);
+        if (mMoviesTopRated != null)
+            savedInstanceState.putParcelableArrayList(TOP_RATED_MOVIES_LIST_KEY, (ArrayList<? extends Parcelable>) mMoviesTopRated);
 
         super.onSaveInstanceState(savedInstanceState);
 

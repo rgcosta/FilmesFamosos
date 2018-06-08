@@ -25,6 +25,7 @@ public class NetworkUtils {
     public final static String IMG_SIZE = "/w780/";    //options: "w92", "w154", "w185", "w342", "w500", "w780" ou "original"
 
     public final static String API_KEY = "api_key";
+    public final static String PAGE = "page";
     public final static String key = BuildConfig.key;
     public final static String POPULAR_PATH = "movie/popular";
     public final static String RATED_PATH = "movie/top_rated";

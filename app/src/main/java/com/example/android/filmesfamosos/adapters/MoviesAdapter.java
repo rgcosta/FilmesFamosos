@@ -2,6 +2,7 @@ package com.example.android.filmesfamosos.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -59,8 +60,12 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
     @Override
     public void onBindViewHolder(MovieViewHolder holder, int position) {
 
-        Picasso.with(holder.mImageView.getContext())
-                .load(mMovies.get(position).getFullPosterPath())
+        Picasso picasso = Picasso.with(holder.mImageView.getContext());
+        picasso.setIndicatorsEnabled(true);
+
+        picasso.load(mMovies.get(position).getFullPosterPath())
+                .placeholder(R.drawable.ic_placeholder_gray_24dp)
+                .error(R.drawable.ic_broken_placeholder_gray_24dp)
                 .into(holder.mImageView);
 
     }
@@ -75,6 +80,13 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
 
     public void setMoviesData(List<Movie> movies){
         this.mMovies = movies;
+        //Log.e(MoviesAdapter.class.getSimpleName(), String.valueOf(mMovies.size()));
+        notifyDataSetChanged();
+    }
+
+    public void addMoviesData(List<Movie> movies){
+        mMovies.addAll(movies);
+        Log.e(MoviesAdapter.class.getSimpleName(), String.valueOf(mMovies.size()));
         notifyDataSetChanged();
     }
 
