@@ -30,6 +30,8 @@ import java.util.List;
 
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewHolder> {
 
+    private static final String TAG = MoviesAdapter.class.getSimpleName();
+
     List<Movie> mMovies = new ArrayList<>();
 
     MoviesOnClickHandler mClickHandler;
@@ -80,13 +82,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
 
     public void setMoviesData(List<Movie> movies){
         this.mMovies = movies;
-        //Log.e(MoviesAdapter.class.getSimpleName(), String.valueOf(mMovies.size()));
-        notifyDataSetChanged();
-    }
-
-    public void addMoviesData(List<Movie> movies){
-        mMovies.addAll(movies);
-        Log.e(MoviesAdapter.class.getSimpleName(), String.valueOf(mMovies.size()));
+        //Log.e(TAG, "setMoviesData - Filmes: " + mMovies.size());
         notifyDataSetChanged();
     }
 

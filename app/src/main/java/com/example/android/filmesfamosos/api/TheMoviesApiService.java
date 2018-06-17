@@ -19,10 +19,10 @@ import static com.example.android.filmesfamosos.utils.NetworkUtils.RATED_PATH;
 public interface TheMoviesApiService {
 
     @GET(POPULAR_PATH)
-    Call<MoviesList> getPopuparMovies(@Query(API_KEY) String key);
+    Call<MoviesList> getPopuparMovies(@Query(API_KEY) String key, @Query(PAGE) int page);
 
     @GET(RATED_PATH)
-    Call<MoviesList> getTopRatedMovies(@Query(API_KEY) String key);
+    Call<MoviesList> getTopRatedMovies(@Query(API_KEY) String key, @Query(PAGE) int page);
 
     @GET(MOVIE_TRAILERS)    // endpoint: movie/{id}/videos
     Call<TrailersList> getMovieTrailers(@Path("id") int id, @Query(API_KEY) String key);

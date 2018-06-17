@@ -22,6 +22,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.android.filmesfamosos.adapters.FavMoviesAdapter;
 import com.example.android.filmesfamosos.adapters.MoviesAdapter;
@@ -37,8 +38,12 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static android.support.v7.widget.RecyclerView.SCROLL_STATE_SETTLING;
 import static android.webkit.ConsoleMessage.MessageLevel.LOG;
 import static com.example.android.filmesfamosos.utils.NetworkUtils.*;
+
+//TODO 1: make recyclerview scrolls smoothly
+//TODO 2: ao adicionar mais filmes ao adapter, posiçõ do scroll volta para o inicio. Corrigir!!
 
 public class MainActivity extends AppCompatActivity
         implements MoviesAdapter.MoviesOnClickHandler, LoaderManager.LoaderCallbacks<Cursor>,
@@ -56,8 +61,10 @@ public class MainActivity extends AppCompatActivity
 
     private static final String IS_TOP_RATED_KEY = "is_top_rated_key";
     private static final String SCROLL_POSITION_KEY = "scroll_position_key";
-    private static final String PAGE_KEY = "page_key";
-    private static final String TOTAL_PAGES_KEY = "total_pages_key";
+    private static final String PAGE_POPULAR_KEY = "page_popular_key";
+    private static final String TOTAL_PAGES_POPULAR_KEY = "total_pages_popular_key";
+    private static final String PAGE_TOP_RATED_KEY = "page_top_rated_key";
+    private static final String TOTAL_PAGES_TOP_RATED_KEY = "total_pages_top_rated_key";
     private static final String POPULAR_MOVIES_LIST_KEY = "popular_movies_list_key";
     private static final String TOP_RATED_MOVIES_LIST_KEY = "top_rated_movies_list_key";
     private static final String SWAP_MODE_KEY = "swap_mode_key";
@@ -76,8 +83,10 @@ public class MainActivity extends AppCompatActivity
     private Parcelable mScrollState;
     private List<Movie> mMoviesPopular;
     private List<Movie> mMoviesTopRated;
-    private int page;
-    private int totalPages;
+    private int pagePopular = 1;
+    private int totalPagesPopular;
+    private int pageTopRated = 1;
+    private int totalPagesTopRated;
 
 
     @Override
@@ -100,6 +109,10 @@ public class MainActivity extends AppCompatActivity
             this.isTopRated = savedInstanceState.getBoolean(IS_TOP_RATED_KEY);
             this.mScrollState = savedInstanceState.getParcelable(SCROLL_POSITION_KEY);
             this.swapMode = savedInstanceState.getInt(SWAP_MODE_KEY);
+            this.pagePopular = savedInstanceState.getInt(PAGE_POPULAR_KEY);
+            this.pageTopRated = savedInstanceState.getInt(PAGE_TOP_RATED_KEY);
+            this.totalPagesPopular = savedInstanceState.getInt(TOTAL_PAGES_POPULAR_KEY);
+            this.totalPagesTopRated = savedInstanceState.getInt(TOTAL_PAGES_TOP_RATED_KEY);
             if (savedInstanceState.containsKey(POPULAR_MOVIES_LIST_KEY)){
                 this.mMoviesPopular = savedInstanceState.getParcelableArrayList(POPULAR_MOVIES_LIST_KEY);
             }
@@ -107,6 +120,35 @@ public class MainActivity extends AppCompatActivity
                 this.mMoviesTopRated = savedInstanceState.getParcelableArrayList(TOP_RATED_MOVIES_LIST_KEY);
             }
         }
+
+        mMoviesGrid.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            /* This callback (onScrolled) will also be called if visible item range changes after a
+            ** layout calculation. In that case, dx and dy will be 0.
+            ** That is the reason wht I used (dx+dy)!=0!!
+            * https://developer.android.com/reference/android/support/v7/widget/RecyclerView.OnScrollListener#onScrollStateChanged(android.support.v7.widget.RecyclerView,%20int)
+             */
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                if (!recyclerView.canScrollVertically(View.FOCUS_DOWN) && (dx+dy)!=0 &&
+                        swapMode != IS_FAVORITE_ID) {
+                    Log.e(TAG, "onScrollStateChanged: BOTTOM ");
+
+                    if (isTopRated) {
+                        if (pageTopRated < totalPagesTopRated) {
+                            pageTopRated++;
+                            loadMoviesData(isTopRated);
+                        }
+                    } else {
+                        if (pagePopular < totalPagesPopular) {
+                            pagePopular++;
+                            loadMoviesData(isTopRated);
+                        }
+                    }
+                }
+            }
+        });
 
         loadMovies();
     }
@@ -159,9 +201,9 @@ public class MainActivity extends AppCompatActivity
 
         Call<MoviesList> call;
         if (isTopRated){
-            call = new NetworkUtils().getTheMoviesApiService().getTopRatedMovies(key);
+            call = new NetworkUtils().getTheMoviesApiService().getTopRatedMovies(key, pageTopRated);
         } else {
-            call = new NetworkUtils().getTheMoviesApiService().getPopuparMovies(key);
+            call = new NetworkUtils().getTheMoviesApiService().getPopuparMovies(key, pagePopular);
         }
 
         call.enqueue(new Callback<MoviesList>() {
@@ -173,14 +215,25 @@ public class MainActivity extends AppCompatActivity
 
                 MoviesList moviesData = response.body();
                 if (isTopRated) {
-                    mMoviesTopRated = moviesData.getMovies();
+                    if (pageTopRated > 1)
+                        mMoviesTopRated.addAll(moviesData.getMovies());
+                    else
+                        mMoviesTopRated = moviesData.getMovies();
                     mAdapter.setMoviesData(mMoviesTopRated);
                     swapMode = REUSING_TOP_RATED_MOVIES_ID;
+                    pageTopRated = moviesData.getPage();
+                    totalPagesTopRated = moviesData.getTotalPages();
                 } else {
-                    mMoviesPopular = moviesData.getMovies();
+                    if (pagePopular > 1)
+                        mMoviesPopular.addAll(moviesData.getMovies());
+                    else
+                        mMoviesPopular = moviesData.getMovies();
                     mAdapter.setMoviesData(mMoviesPopular);
                     swapMode = REUSING_POPULAR_MOVIES_ID;
+                    pagePopular = moviesData.getPage();
+                    totalPagesPopular = moviesData.getTotalPages();
                 }
+                Log.e(TAG, "onResponse - Filmes: " + mMoviesGrid.getAdapter().getItemCount());
                 mMoviesGrid.getLayoutManager().onRestoreInstanceState(mScrollState);
             }
 
@@ -263,6 +316,10 @@ public class MainActivity extends AppCompatActivity
         savedInstanceState.putBoolean(IS_TOP_RATED_KEY, isTopRated);
         savedInstanceState.putParcelable(SCROLL_POSITION_KEY, mMoviesGrid.getLayoutManager().onSaveInstanceState());
         savedInstanceState.putInt(SWAP_MODE_KEY, swapMode);
+        savedInstanceState.putInt(PAGE_POPULAR_KEY, pagePopular);
+        savedInstanceState.putInt(PAGE_TOP_RATED_KEY, pageTopRated);
+        savedInstanceState.putInt(TOTAL_PAGES_POPULAR_KEY, totalPagesPopular);
+        savedInstanceState.putInt(TOTAL_PAGES_TOP_RATED_KEY, totalPagesTopRated);
         if (mMoviesPopular != null)
             savedInstanceState.putParcelableArrayList(POPULAR_MOVIES_LIST_KEY, (ArrayList<? extends Parcelable>) mMoviesPopular);
         if (mMoviesTopRated != null)
